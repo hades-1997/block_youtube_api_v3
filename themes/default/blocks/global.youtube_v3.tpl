@@ -35,22 +35,84 @@
     }
 
     #playlist {
-        left: 50%;
+        /* left: 50%;*/
         display: flex;
         /* position: absolute;  */
         transition: all ease 0.3s;
-        margin-top: 50px;
+        margin: 50px 0;
+
     }
 
     #video-dis {
         flex: 6.5;
         margin-right: 20px;
         background: black;
+        position: relative;
+        min-height: 350px;
     }
 
     #video-dis iframe {
         width: 100%;
         height: 100%;
+    }
+
+    /* Fallback link cho Short nếu embed bị lỗi 153 */
+    #short-overlay {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        cursor: pointer;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 10px;
+        z-index: 10;
+    }
+
+    #short-overlay img {
+        display: none;
+    }
+
+    #short-overlay .play-btn {
+        width: 30px;
+        height: 30px;
+        background: rgba(255, 0, 0, 0.9);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+
+    #short-overlay .play-btn::after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 6px 0 6px 11px;
+        border-color: transparent transparent transparent #fff;
+        margin-left: 2px;
+    }
+
+    #short-overlay .short-badge {
+        color: #fff;
+        font-size: 13px;
+        font-weight: normal;
+    }
+
+    .video-con .short-label {
+        background: #f00;
+        color: #fff;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 1px 5px;
+        border-radius: 2px;
+        margin-left: 5px;
+        vertical-align: middle;
     }
 
     .video-li {
@@ -207,59 +269,71 @@
     }
 </style>
 
-<div id="playlist">
+<section class="wraper">
+    <div id="playlist" class="">
 
-    <div id="video-dis">
-        <iframe id="display-frame" src="" title="YouTube video player" frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe>
-    </div>
-
-    <div id="v-list" class="video-li">
-
-        <div id="vli-info">
-            <div id="upper-info">
-                <div id="li-titles">
-                    <div class="title">{NAME_CHANNEL}</div>
-                    <div class="sub-title">
-                        <a href="https://www.youtube.com/channel/{CHANNEL_ID}" class="channel"> </a>
-                        -
-                        <span id="video-count">1 / 2</span>
-                    </div>
-                </div>
-                <div id="drop-icon"></div>
-            </div>
-            <div id="lower-info">
-                <div id="btn-repeat"></div>
-                <div id="btn-suffle"></div>
-                <div id="btn-save"></div>
+        <div id="video-dis">
+            <iframe id="display-frame" src="" title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <div id="short-overlay">
+                <img id="short-thumb" src="" alt="">
+                <div class="play-btn"></div>
+                <div class="short-badge">Nếu video không phát được, bấm vào đây để xem trên YouTube</div>
             </div>
         </div>
 
-        <div id="vli-videos">
-            <!--  active-con -->
+        <div id="v-list" class="video-li">
 
-            <!-- BEGIN: loop -->
-            <div class="video-con <!-- BEGIN: one -->active-con<!-- END: one -->" video="https://www.youtube.com/embed/{ROW.videoid}">
-                <div class="index title">0</div>
-                <div class="thumb">
-                    <img src="{ROW.thumb}" alt="">
-                </div>
-                <div class="v-titles">
-                    <div class="title">{ROW.title}</div>
-                    <div class="sub-title">
-                        <a href="https://www.youtube.com/channel/{CHANNEL_ID}" class="channel"
-                            target="_blank">{ROW.channel}</a>
+            <div id="vli-info">
+                <div id="upper-info">
+                    <div id="li-titles">
+                        <div class="title">{NAME_CHANNEL}</div>
+                        <div class="sub-title">
+                            <a href="https://www.youtube.com/channel/{CHANNEL_ID}" class="channel"> </a>
+                            -
+                            <span id="video-count">1 / 2</span>
+                        </div>
                     </div>
+                    <div id="drop-icon"></div>
+                </div>
+                <div id="lower-info">
+                    <div id="btn-repeat"></div>
+                    <div id="btn-suffle"></div>
+                    <div id="btn-save"></div>
                 </div>
             </div>
-            <!-- END: loop -->
-            
+
+            <div id="vli-videos">
+                <!--  active-con -->
+
+                <!-- https://www.youtube.com/shorts/Video-ID  https://www.youtube.com/embed/-->
+
+                <!-- BEGIN: loop -->
+                <div class="video-con <!-- BEGIN: one -->active-con<!-- END: one -->"
+                    video="https://www.youtube.com/embed/{ROW.videoid}" data-is-short="{ROW.is_short}"
+                    data-videoid="{ROW.videoid}" data-thumb="{ROW.thumb}">
+                    <div class="index title">0</div>
+                    <div class="thumb">
+                        <img src="{ROW.thumb}" alt="">
+                    </div>
+                    <div class="v-titles">
+                        <div class="title">{ROW.title}<!-- BEGIN: short_badge --><span
+                                class="short-label">SHORT</span><!-- END: short_badge --></div>
+                        <div class="sub-title">
+                            <a href="https://www.youtube.com/channel/{CHANNEL_ID}" class="channel"
+                                target="_blank">{ROW.channel}</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: loop -->
+
+
+            </div>
 
         </div>
-
     </div>
-</div>
+</section>
 <script>
 
     // utlity
@@ -325,9 +399,38 @@
             video_list.classList.add("li-collapsed");
         }
     }
-    function loadVideo(url) {
+    var shortOverlay = qs("#short-overlay");
+    var shortThumb = qs("#short-thumb");
+    var currentShortId = "";
+
+    function loadVideo(container) {
+        var isShort = container.getAttribute("data-is-short") === "1";
+        var url = container.getAttribute("video");
+        var videoId = container.getAttribute("data-videoid");
+        var thumb = container.getAttribute("data-thumb");
+
+        // Luôn dùng embed iframe cho cả Short và video thường
+        display.style.display = "block";
         display.setAttribute("src", url);
+
+        if (isShort) {
+            // Short: hiện overlay phía dưới để user click mở trên YouTube nếu embed lỗi
+            shortThumb.setAttribute("src", thumb);
+            shortOverlay.style.display = "flex";
+            currentShortId = videoId;
+        } else {
+            // Video thường: ẩn overlay
+            shortOverlay.style.display = "none";
+            currentShortId = "";
+        }
     }
+
+    // Click vào Short overlay → mở YouTube Shorts trong tab mới (fallback nếu embed lỗi)
+    shortOverlay.addEventListener("click", function () {
+        if (currentShortId) {
+            window.open("https://www.youtube.com/shorts/" + currentShortId, "_blank");
+        }
+    });
 
     //******************
     // Main Function heres
@@ -337,14 +440,14 @@
         indexAll(); // container indexes
         countVideos(1);
         activate(v_cons[0]);
-        loadVideo(v_cons[0].getAttribute("video"));
+        loadVideo(v_cons[0]);
 
         // Event handeling goes here
         // on each video container click
         v_cons.forEach((container) => {
             container.addEventListener("click", () => {
                 activate(container);
-                loadVideo(container.getAttribute("video"));
+                loadVideo(container);
             });
         });
         // on each button click
